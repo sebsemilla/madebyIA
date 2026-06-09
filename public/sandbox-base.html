@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canvas</title>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MorphSVGPlugin.min.js"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow-x: hidden; }
+
+    /* Utility classes available for generated pages */
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .h-screen { height: 100vh; }
+    .w-full { width: 100%; }
+    .text-center { text-align: center; }
+  </style>
+</head>
+<body>
+  <!-- Generated content is injected here -->
+  %%CONTENT%%
+
+  <script>
+    // Register GSAP plugins when available
+    if (typeof gsap !== 'undefined') {
+      if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+      if (typeof TextPlugin !== 'undefined') gsap.registerPlugin(TextPlugin);
+    }
+
+    // Communicate selection events to parent window
+    document.addEventListener('click', (e) => {
+      const el = e.target;
+      if (!el || el === document.body || el === document.documentElement) return;
+
+      const rect = el.getBoundingClientRect();
+      const html = el.outerHTML;
+      const selector = getSelector(el);
+
+      window.parent.postMessage({
+        type: 'ELEMENT_SELECTED',
+        payload: { html, selector, rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height } }
+      }, '*');
+    });
+
+    function getSelector(el) {
+      if (el.id) return '#' + el.id;
+      const tag = el.tagName.toLowerCase();
+      const classes = Array.from(el.classList).slice(0, 2).join('.');
+      return classes ? `${tag}.${classes}` : tag;
+    }
+  </script>
+</body>
+</html>
